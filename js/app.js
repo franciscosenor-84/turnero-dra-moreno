@@ -156,7 +156,7 @@ function App() {
   }, [acceso, st.error]);
 
   useEffect(() => {
-    document.title = `${TITULOS[seccion] || 'Turnero'} · Dra. Moreno`;
+    document.title = seccion === 'agenda' || !TITULOS[seccion] ? 'Turnero Dra. Moreno' : `${TITULOS[seccion]} · Turnero Dra. Moreno`;
   }, [seccion]);
 
   if (acceso === 'revisando') return html`<${Cargando} texto="Abriendo la agenda…" />`;

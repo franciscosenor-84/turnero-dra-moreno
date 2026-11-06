@@ -1,16 +1,39 @@
 {
-  "name": "Turnero · Dra. Moreno",
-  "short_name": "Turnero",
+  "id": "./",
+  "name": "Turnero Dra. Moreno",
+  "short_name": "Turnero Dra. Moreno",
   "description": "Agenda de turnos de la Dra. María Carolina Moreno · Dermatología · CC Consultorios",
   "lang": "es-AR",
+  "dir": "ltr",
   "start_url": "./#/agenda",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F4F6FA",
   "theme_color": "#15438C",
   "icons": [
-    { "src": "img/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "img/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "img/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "img/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/icono-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "img/icono-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
