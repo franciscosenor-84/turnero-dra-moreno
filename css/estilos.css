@@ -119,12 +119,24 @@ img { max-width: 100%; }
 
 .encabezado-celular {
   position: sticky; top: 0; z-index: 25;
-  display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 14px;
+  display: flex; align-items: center; gap: 6px; padding: 10px 10px 10px 12px;
 }
-.encabezado-celular .marca { flex: 1 1 auto; gap: 10px; }
+.encabezado-celular .marca { flex: 1 1 auto; gap: 8px; min-width: 0; }
+.encabezado-celular .marca-textos { min-width: 0; }
 .encabezado-celular .marca-nombre { font-size: 16px; }
 .encabezado-celular .marca-sub { font-size: 12px; }
+.encabezado-celular .marca-nombre, .encabezado-celular .marca-sub { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.nav-iconos { display: flex; align-items: center; gap: 5px; flex: none; }
 .encabezado-celular .btn-icono { border: 1px solid var(--borde); background: var(--blanco); }
+.encabezado-celular .btn-icono-grande { width: 44px; height: 44px; }
+.encabezado-celular .btn-icono.activo { background: var(--azul-claro); border-color: var(--reservado-borde); color: var(--azul); }
+/* Celulares angostos: íconos un poco más chicos para que entre el nombre completo */
+@media (max-width: 379px) {
+  .encabezado-celular { gap: 5px; padding: 8px 8px 8px 10px; }
+  .encabezado-celular .marca { gap: 7px; }
+  .encabezado-celular .logo { width: 34px; height: 34px; }
+  .encabezado-celular .btn-icono-grande { width: 40px; height: 40px; }
+}
 
 .sin-conexion {
   display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px;
@@ -169,7 +181,6 @@ img { max-width: 100%; }
 .btn-icono:hover { background: var(--fondo); color: var(--texto); }
 .btn-icono-grande { width: 48px; height: 48px; }
 .con-borde { border: 1px solid var(--borde-fuerte); background: var(--blanco); }
-.encabezado-celular .btn-icono-grande { width: 44px; height: 44px; }
 
 .acciones-fila { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .grilla-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

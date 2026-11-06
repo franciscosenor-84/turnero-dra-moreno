@@ -400,6 +400,16 @@ function AgendaCelular({ query }) {
   const [menuTurno, setMenuTurno] = useState(null);
 
   useEffect(() => recordar('celular', fecha), [fecha]);
+  // El ícono de agenda del encabezado vuelve al próximo día de atención.
+  useEffect(() => {
+    const alInicio = () => {
+      setAbierto(null);
+      setFecha(proximasFechas(1)[0]);
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('turnero:agenda-inicio', alInicio);
+    return () => window.removeEventListener('turnero:agenda-inicio', alInicio);
+  }, []);
   useEffect(() => {
     asegurarTurnosDesde(fecha).catch(() => aviso('No se pudieron traer los turnos anteriores.', { tipo: 'error' }));
   }, [fecha]);

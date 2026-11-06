@@ -1,6 +1,6 @@
 // Piezas de interfaz compartidas: íconos, avisos, diálogos, encabezado y menú.
 import { html, useEffect, useState, useReducer } from './lib.js';
-import { estado, useStore, setQuien } from './store.js';
+import { estado, useStore, setQuien, proximasFechas } from './store.js';
 import { armarRuta, navegar } from './router.js';
 
 // ---------- Íconos ----------
@@ -204,6 +204,16 @@ export function Encabezado({ seccion, esCompu, itemsMenu }) {
       </div>
     </header>`;
   }
+  // Celular: agenda, pacientes y lista de espera como íconos; lo que se usa poco, en los tres puntitos.
+  const proximo = st.config ? proximasFechas(1)[0] : undefined;
+  const irAgenda = (e) => {
+    // Si ya está en la agenda (mirando otro día), vuelve al próximo día de atención.
+    if (seccion === 'agenda') {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('turnero:agenda-inicio'));
+    }
+  };
+  const icono = (actual) => 'btn-icono btn-icono-grande' + (actual ? ' activo' : '');
   return html`<header class="encabezado encabezado-celular">
     <a class="marca" href="#/agenda">
       <${Logo} t=${38} />
@@ -212,10 +222,16 @@ export function Encabezado({ seccion, esCompu, itemsMenu }) {
         <span class="marca-sub">${st.config?.especialidad || ''}</span>
       </span>
     </a>
-    <a class="btn-icono btn-icono-grande" href="#/pacientes" aria-label="Buscar paciente"><${Icono} n="buscar" /></a>
-    <a class="btn-icono btn-icono-grande con-insignia" href="#/espera" aria-label=${`Lista de espera: ${nEspera} pacientes`}>
-      <${Icono} n="reloj" />${nEspera > 0 && html`<span class="insignia insignia-flotante" aria-hidden="true">${nEspera}</span>`}
-    </a>
+    <nav class="nav-iconos" aria-label="Secciones">
+      <a class=${icono(seccion === 'agenda')} href=${armarRuta('/agenda', { dia: proximo })} onClick=${irAgenda}
+        aria-label="Agenda" title="Agenda" aria-current=${seccion === 'agenda' ? 'page' : undefined}><${Icono} n="calendario" /></a>
+      <a class=${icono(seccion === 'pacientes')} href="#/pacientes"
+        aria-label="Pacientes" title="Pacientes" aria-current=${seccion === 'pacientes' ? 'page' : undefined}><${Icono} n="buscar" /></a>
+      <a class=${icono(seccion === 'espera') + ' con-insignia'} href="#/espera" title="Lista de espera"
+        aria-label=${`Lista de espera: ${nEspera} ${nEspera === 1 ? 'paciente' : 'pacientes'}`} aria-current=${seccion === 'espera' ? 'page' : undefined}>
+        <${Icono} n="reloj" />${nEspera > 0 && html`<span class="insignia insignia-flotante" aria-hidden="true">${nEspera}</span>`}
+      </a>
+    </nav>
     <${MenuMas} items=${itemsMenu} />
   </header>`;
 }
