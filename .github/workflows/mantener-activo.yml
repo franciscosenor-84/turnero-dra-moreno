@@ -1,0 +1,56 @@
+# Mantiene activa la base de datos del turnero.
+# Supabase pausa los proyectos gratuitos que tienen poca actividad durante una semana,
+# y el turnero se usa solo los lunes. Esta tarea hace una consulta mínima tres veces por día
+# (no lee ni modifica datos de pacientes ni turnos).
+name: Mantener activa la base de datos
+
+on:
+  schedule:
+    # 00:23, 08:23 y 16:23 hora de Argentina (GitHub usa hora UTC)
+    - cron: '23 3,11,19 * * *'
+  workflow_dispatch: # permite correrla a mano desde la pestaña Actions
+
+permissions:
+  actions: write # para que GitHub no apague esta tarea por inactividad (último paso)
+  contents: read
+
+concurrency:
+  group: mantener-activo
+  cancel-in-progress: false
+
+jobs:
+  latido:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: js/config.js
+          sparse-checkout-cone-mode: false
+
+      - name: Consultar la base de datos
+        run: |
+          # Toma la dirección y la clave pública del mismo archivo que usa la app.
+          URL=$(grep -oP "SUPABASE_URL\s*=\s*'\K[^']+" js/config.js)
+          CLAVE=$(grep -oP "SUPABASE_KEY\s*=\s*'\K[^']+" js/config.js)
+          for intento in 1 2 3; do
+            codigo=$(curl -sS -m 30 -o respuesta.txt -w '%{http_code}' -X POST "$URL/rest/v1/rpc/latido" \
+              -H "apikey: $CLAVE" -H 'Content-Type: application/json' -d '{}') || codigo=000
+            echo "Intento $intento: respuesta $codigo"
+            if [ "$codigo" = "200" ]; then
+              echo "Latido registrado: $(cat respuesta.txt)"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "::error::La base de datos no respondió. Si Supabase la pausó, entrá a supabase.com, abrí el proyecto turnero-dra-moreno y tocá 'Resume project'."
+          exit 1
+
+      - name: Evitar que GitHub apague esta tarea por inactividad
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        # GitHub desactiva las tareas programadas de los repositorios públicos sin cambios en 60 días.
+        # Volver a habilitarla reinicia esa cuenta.
+        run: gh workflow enable mantener-activo.yml
